@@ -24,16 +24,22 @@ jobs:
           python3-pip git zip unzip openjdk-11-jdk
         pip install cython==0.29.36 buildozer
 
-    - name: Install Android cmdline-tools (aidl fix)
+    - name: Install Android cmdline-tools (AIDL Fix)
       run: |
         mkdir -p $HOME/android-sdk/cmdline-tools
         curl -o cmdline-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-10406996_latest.zip
         unzip cmdline-tools.zip -d $HOME/android-sdk/cmdline-tools
         mv $HOME/android-sdk/cmdline-tools/cmdline-tools $HOME/android-sdk/cmdline-tools/latest
+
         echo "ANDROID_SDK_ROOT=$HOME/android-sdk" >> $GITHUB_ENV
-        echo "$HOME/android-sdk/cmdline-tools/latest/bin:$HOME/android-sdk/platform-tools:$PATH" >> $GITHUB_ENV
+        echo "ANDROID_NDK_HOME=$HOME/android-sdk/ndk/21.4.7075529" >> $GITHUB_ENV
+        echo "$HOME/android-sdk/cmdline-tools/latest/bin" >> $GITHUB_PATH
+        echo "$HOME/android-sdk/platform-tools" >> $GITHUB_PATH
+
         yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses || true
-        $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-31" "build-tools;31.0.0" "ndk;21.4.7075529"
+        $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager \
+          "platform-tools" "platforms;android-31" \
+          "build-tools;31.0.0" "ndk;21.4.7075529"
 
     - name: Build APK
       run: buildozer android debug
