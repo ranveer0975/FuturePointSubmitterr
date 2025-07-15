@@ -42,7 +42,9 @@ jobs:
           "build-tools;31.0.0" "ndk;21.4.7075529"
 
     - name: Build APK
-      run: buildozer android debug
+      run: |
+        echo "sdk.dir=$HOME/android-sdk" > local.properties
+        buildozer android debug
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
